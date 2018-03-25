@@ -1,0 +1,39 @@
+
+/*-------Content-Week-------*/
+.week-item{
+    width: 14.25%;
+    border-right: 1px solid #cccccc;
+    float: left;
+    overflow-y: auto;
+    height: 800px;
+}
+
+.week-item .header{
+    height: 72px;
+    border-bottom: 1px solid #cccccc;
+    color: #9e9e9e;
+}
+
+.week-item .header .dayOfWeek{
+    font-size: 12px;
+    height: 30px;
+    line-height: 30px;
+}
+
+.week-item .header .dayOfMonth{
+    font-size: 40px;
+    height: 30px;
+    line-height: 30px;
+}
+
+.week-item .content .calendar-item{
+    padding: 2px;
+    border-right: 1px solid #ffffff;
+    border-top: 1px solid #ffffff;
+    background: #4285f4;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 12px;
+    max-height: 100px;
+    overflow: hidden;
+}

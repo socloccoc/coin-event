@@ -11,6 +11,17 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+
+Route::get('/', [
+    'as' => 'index',
+    'uses' => 'HomeController@index']
+);
+
+Route::group(['prefix' => 'ajax'], function () {
+
+    Route::get('getEventOfDay', [
+        'as' => 'getEventOfDay',
+        'uses' => 'AjaxController@getEventOfDay'
+    ]);
+
 });

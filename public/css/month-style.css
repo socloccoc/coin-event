@@ -1,0 +1,48 @@
+.month-content .week .dayOfWeek{
+    width: 14.2%;
+    float: left;
+    padding: 5px;
+    border-right: 1px solid #cccccc;
+    color: #8f8f8f;
+}
+
+.month-content .month-item{
+    width: 14.2%;
+    float: left;
+    padding: 5px;
+    border-right: 1px solid #cccccc;
+    border-bottom: 1px solid #cccccc;
+    height: 125px;
+}
+
+.month-content .month-item a{
+    color: #000000;
+}
+
+.month-content .month-item ul {
+    padding-left: 5px;
+    list-style: none;
+}
+
+.month-content .month-item ul li {
+     line-height: 20px;
+     text-align: justify;
+     font-size: 12px;
+     white-space: nowrap;
+     overflow: hidden;
+ }
+
+.month-content .month-item ul li i {
+    color: #4285f4;
+    font-size: 9px;
+
+}
+
+.month-content .month-item label{
+    margin-bottom: 0px;
+    margin-left: 5px;
+    font-size: 12px;
+    color: #8f8f8f;
+}
+
+
