@@ -18,6 +18,7 @@
     <script src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js"></script>
 
     <script src="js/uikit.min.js"></script>
+    <script src="js/bootstrap-popover-x.js"></script>
     <script src="js/uikit-icons.min.js"></script>
 </head>
 <body>
@@ -110,6 +111,9 @@
                     });
                 },
                 complete: function () {
+                    $.getScript("/js/bootstrap-popover-x.js", function() {
+                       // alert('loaded script and content');
+                    });
                 }
             });
         }
