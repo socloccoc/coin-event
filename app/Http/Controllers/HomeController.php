@@ -6,6 +6,7 @@ use Illuminate\Routing\Controller as BaseController;
 use App\Repository\Contracts\EventsInterface as Events;
 use Carbon\Carbon;
 use App\Services\DateTimeService as DateTime;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends BaseController
 {
@@ -20,7 +21,6 @@ class HomeController extends BaseController
 
     public function index()
     {
-
         $currentDate = Carbon::now()->format('Y-m-d');
         $dayOfWeek = $this->dateTime->getDayOfWeek($currentDate);
         $currentDay = explode('-', $currentDate)[2];

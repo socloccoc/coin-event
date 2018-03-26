@@ -11,13 +11,22 @@
 |
 */
 
+Route::get('login', [
+    'as' => 'form.login',
+    'uses' => 'AuthController@ShowloginForm'
+]);
 
-Route::get('/', [
-    'as' => 'index',
-    'uses' => 'HomeController@index']
-);
+Route::post('login', 'AuthController@login');
+Route::get('logout', 'AuthController@logout');
 
-Route::group(['prefix' => 'ajax'], function () {
+Route::group(['middleware'=>'adminLogin'],function (){
+    Route::get('/', [
+            'as' => 'index',
+            'uses' => 'HomeController@index']
+    );
+});
+
+Route::group(['prefix' => 'ajax', 'middleware' => 'adminLogin'], function () {
 
     Route::get('getEventOfDay', [
         'as' => 'getEventOfDay',

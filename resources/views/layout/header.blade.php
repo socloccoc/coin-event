@@ -31,10 +31,10 @@
             <div class="uk-navbar-right uk-light">
                 <ul class="uk-navbar-nav">
                     <li class="uk-active">
-                        <a style="font-size: 15px; color: #000000">Daidv &nbsp;<span class="ion-ios-arrow-down"></span></a>
+                        <a style="font-size: 15px; color: #000000">{{ isset($currentUser->name) ? $currentUser->name : '' }} &nbsp;<span class="ion-ios-arrow-down"></span></a>
                         <div uk-dropdown="pos: bottom-right; mode: click; offset: -17;">
                             <ul class="uk-nav uk-navbar-dropdown-nav">
-                                <li><a href="#" style="font-size: 12px">Logout</a></li>
+                                <li><a href="logout" style="font-size: 12px">Logout</a></li>
                             </ul>
                         </div>
                     </li>
