@@ -4,15 +4,20 @@ namespace App\Console\Commands;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 use Symfony\Component\DomCrawler\Crawler;
 use App\Services\CalendarService as CalendarService;
 use App\Repository\Contracts\EventsInterface as EventsInterface;
 use App\Models\CoinmarketcalEvents;
+use Statickidz\GoogleTranslate;
+use Google_Service_Drive_Resource_Files;
 
 class GetCoinEventCommand extends Command
 {
     protected $calendar;
     protected $event;
+    protected $client;
+    protected $clientC;
 
     /**
      * The name and signature of the console command.
@@ -35,10 +40,13 @@ class GetCoinEventCommand extends Command
      */
     public function __construct(CalendarService $calendar, EventsInterface $event)
     {
+        $this->client = $this->createAuthenticatedGoogleDriverClient();
+        $this->clientC = $this->createAuthenticatedGoogleClientCalendar();
         $this->calendar = $calendar;
         $this->event = $event;
         parent::__construct();
     }
+
 
     /**
      * Execute the console command.
@@ -47,7 +55,8 @@ class GetCoinEventCommand extends Command
      */
     public function handle()
     {
-        echo "Start : ".Carbon::now()."\n";
+
+        echo "Start : " . Carbon::now() . "\n";
         $url = "https://coinmarketcal.com/";
         $crawler = new Crawler($this->getData($url));
         $crawler->filterXPath('//nav[@class="pagination-wrapper pagination"]')->each(function ($node) use (&$totalPage) {
@@ -71,6 +80,7 @@ class GetCoinEventCommand extends Command
                 $date_event = '';
                 $content_event = '';
                 $source_url = '';
+                $imgSource = null;
 
                 //filter to get date_event & coin_name
                 $node->filter('.content-box-general > h5')->each(function ($item, $index) use (&$date_event, &$coin_name) {
@@ -85,41 +95,60 @@ class GetCoinEventCommand extends Command
                 $content_event = trim($node->filter('.content-box-general > .content-box-info > .description')->text());
 
                 //filter to get source_url
-                $node->filter('.content-box-general > .content-box-info > a')->each(function ($item, $index) use (&$source_url) {
+                $node->filter('.content-box-general > .content-box-info > a')->each(function ($item, $index) use (&$source_url, &$imgSource) {
+                    if ($index == 0) {
+                        $img_url = 'https://coinmarketcal.com/' . trim($item->attr('href'));
+                        $imgSource = @file_get_contents($img_url);
+                    }
                     if ($index == 1) {
                         $source_url = trim($item->attr('href'));
                     }
                 });
 
-                $start = Carbon::createFromFormat('d F Y', $date_event, 'GMT+7')->startOfDay();
-                $end = Carbon::createFromFormat('d F Y', $date_event, 'GMT+7')->endOfDay();
+                $start = Carbon::createFromFormat('d F Y', $date_event, 'GMT+7');
+                $end = Carbon::createFromFormat('d F Y', $date_event, 'GMT+7');
 
                 $dataCrawls = [
                     'coin_name' => $coin_name,
                     'content_event' => $content_event,
+                    'content_event_jp' => $this->translate($content_event),
+                    'source_url' => $source_url,
                     'date' => $date_event,
                     'start' => $start,
-                    'end' => $end
+                    'end' => $end,
                 ];
 
                 $conditions = [
-                    ['coin_name' ,'=', $coin_name],
-                    ['content_event' ,'=', $content_event],
+                    ['coin_name', '=', $coin_name],
+                    ['content_event', '=', $content_event],
                     ['date', '=', $date_event]
                 ];
 
-                $checkEventExist = $this->event->firstWhere($conditions);
-                if(count($checkEventExist) == 0){
-                    $data[] = $dataCrawls;
-                    $this->calendar->save($dataCrawls);
-                    echo "save : ".Carbon::now()."\n".$coin_name."\n";
-                }
+
+                $googleDriver = new \Google_Service_Drive($this->client);
+
+                $file = new \Google_Service_Drive_DriveFile([
+                    'name' => uniqid().'.png',
+                    'parents' => array('1GbIVJLQxr8N04eAvzKVYzT3xqHQiwgPW')
+                ]);
+
+                $fileId = $googleDriver->files->create($file, [
+                    'data' => $imgSource,
+                    'mimeType' => 'image/png',
+                    'fields' => 'id'
+                ]);
+
+                //$checkEventExist = $this->event->firstWhere($conditions);
+                //if(count($checkEventExist) == 0){
+                $data[] = $dataCrawls;
+                $this->calendar->save($dataCrawls, $fileId->id, $this->clientC);
+                echo "save : " . Carbon::now() . "\n" . $coin_name . "\n";
 
             });
 
-            CoinmarketcalEvents::insert($data);
+            //CoinmarketcalEvents::insert($data);
         }
-        echo "End : ".Carbon::now()."\n";
+        echo "End : " . Carbon::now() . "\n";
 
     }
 
@@ -142,5 +171,43 @@ class GetCoinEventCommand extends Command
         return $res;
     }
 
-    //calendar-demo@optimistic-yew-197612.iam.gserviceaccount.com
+    private function translate($content)
+    {
+        $source = 'en';
+        $target = 'ja';
+        $text = $content;
+
+        $trans = new GoogleTranslate();
+        $result = $trans->translate($source, $target, $text);
+
+        return $result;
+    }
+
+    public function createAuthenticatedGoogleDriverClient()
+    {
+        $client = new \Google_Client();
+
+        $client->setScopes([
+            \Google_Service_Drive::DRIVE_FILE,
+        ]);
+
+        $client->setAuthConfig(storage_path('app/google-calendar/google-driver-my-project.json'));
+
+        return $client;
+    }
+
+    public function createAuthenticatedGoogleClientCalendar()
+    {
+        $client = new \Google_Client();
+
+        $client->setScopes([
+            \Google_Service_Calendar::CALENDAR,
+        ]);
+
+        $client->setAuthConfig(storage_path('app/google-calendar/service-account-credentials.json'));
+
+        return $client;
+    }
+
+//calendar-demo@optimistic-yew-197612.iam.gserviceaccount.com
 }

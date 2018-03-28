@@ -1,0 +1,6 @@
+client_id : 519947637420-mqbdk8n2h504ef6g6s2lf6s4hc4oh1f1.apps.googleusercontent.com
+client_secres : jmQm3OFmdWgNChIuR1Kx9pUQ
+Authorization code: 4/AADtofpP_H4R4q-lujELODIsq0nZsn3Q2nf27NWevC0i14p4bjvm5PL_4_nWKdcSTyUhUb8D3iWTTNWlYSWXqHE
+Refresh token: 1/k_03ua_GpFGsWZM69x6VOObRi-wzQswhLDamNPh6lIk
+Access token: ya29.GluLBSSAIdWSF2xMCumoawkpdSaOr4fEFj4ZAsct6hCFbqd2wnyntex6lyAFGPrm-dVviWS6ro3PALDb6XeegRHqbC4S-CPgBRe04sqGlU5oEN-xw3iw3C46Jtqo
+folders_id : 1GbIVJLQxr8N04eAvzKVYzT3xqHQiwgPW

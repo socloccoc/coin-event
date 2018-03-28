@@ -24,12 +24,15 @@
 }
 
 .content-day .content .calendar-item{
-    padding: 5px;
-    margin: 4px;
-    background: #4285f4;
+    padding: 1px;
     color: #ffffff;
     cursor: pointer;
     font-size: 12px;
-    height: 110px;
     overflow: hidden;
+}
+
+.content-day .content .calendar-item div{
+    background-color: #4285f4;
+    height: 110px;
+    padding: 3px;
 }

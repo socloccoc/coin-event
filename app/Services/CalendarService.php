@@ -7,22 +7,48 @@
  */
 namespace App\Services;
 use Spatie\GoogleCalendar\Event;
+use Google_Client;
 
 class CalendarService
 {
-    public function __construct(){}
+    protected $service;
+    public function __construct(){
+    }
 
     /**
      * Create a new event
      *
      * @param array $events
      */
-    public function save($events){
+    public function save($events, $fileId, $clientC){
+
         $event = new Event();
+
         $event->name = '【'.$events['coin_name'].'】'.$events['content_event'];
-        $event->startDateTime = $events['start'];
-        $event->endDateTime = $events['end'];
-        $event->save();
+        $event->startDate = $events['start'];
+        $event->endDate = $events['end'];
+        $event->location = $events['source_url'];
+        $event->description = $events['content_event']."\n\n".$events['content_event_jp'];
+
+        $resource = $event->save();
+
+        $calendarService = new \Google_Service_Calendar($clientC);
+        $event = $calendarService->events->get(env('CALENDAR_ID'),$resource->id);
+
+        $attachments = $event->attachments;
+
+        $attachments[] = array(
+            'fileUrl' => 'https://drive.google.com/open?id='.$fileId,
+        );
+
+        $changes = new \Google_Service_Calendar_Event(array(
+            'attachments' => $attachments
+        ));
+
+        $calendarService->events->patch(env('CALENDAR_ID'), $resource->id, $changes, array(
+            'supportsAttachments' => TRUE
+        ));
+
     }
 
 
