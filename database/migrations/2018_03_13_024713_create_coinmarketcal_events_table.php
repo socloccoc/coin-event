@@ -15,11 +15,14 @@ class CreateCoinmarketcalEventsTable extends Migration
     {
         Schema::create('coinmarketcal_events', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('event_id');
             $table->string('coin_name', 100);
+            $table->string('source_url', 150);
             $table->text('content_event');
+            $table->text('content_event_jp');
+            $table->string('image_url', 150);
             $table->string('date');
-            $table->string('start');
-            $table->string('end');
+            $table->string('date_convert');
             $table->timestamps();
         });
     }

@@ -24,7 +24,7 @@ class HomeController extends BaseController
         $currentDate = Carbon::now()->format('Y-m-d');
         $dayOfWeek = $this->dateTime->getDayOfWeek($currentDate);
         $currentDay = explode('-', $currentDate)[2];
-        $listEventToday = $this->events->findWhereAll(['start' => $currentDate . ' 00:00:00']);
+        $listEventToday = $this->events->findWhereAll(['date_convert' => $currentDate . ' 00:00:00']);
 
         return view('home.index', compact('listEventToday', 'currentDay', 'dayOfWeek', 'currentDate'));
     }
